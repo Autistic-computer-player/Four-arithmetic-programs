@@ -1,0 +1,1116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define Max 1000
+#define MaxNum 1000
+
+int Judge(float arrpara);
+void Add(int num,int range,int parameternum);
+void Subtract(int num,int range,int parameternum);
+void Multiply(int num,int range,int parameternum);
+void Divide(int num,int range,int parameternum);
+void AddComplex(int num,int range,int brackets,int point,int parameternum);
+void SubtractComplex(int num,int range,int brackets,int point,int parameternum);
+void MultiplyComplex(int num,int range,int brackets,int point,int parameternum);
+void DivideComplex(int num,int range,int brackets,int point,int parameternum);
+void HybridOperation(int num,int range,int brackets,int point,int parameternum);
+
+int main()
+{
+	int num=0,range=0,oper=0,parameternum=0;
+	int brackets=0,point=0;
+	printf("请输入题目数量:\n");
+	scanf("%d",&num);
+	printf("请输入参数数量:\n");
+	scanf("%d",&parameternum);
+	printf("请输入范围\n");
+	scanf("%d",&range);
+	printf("请输入试题类型:\n");
+	printf("1.简单加法 2.复杂加法 3.简单减法 4.复杂减法\n");
+	printf("5.简单乘法 6.复杂乘法 7.简单除法 8.复杂除法\n");
+	printf("若想自定义运算，则按9\n");
+	scanf("%d",&oper);
+	switch(oper)
+	{
+	case 1:Add(num,range,parameternum);break;
+	case 2:AddComplex(num,range,brackets,point,parameternum);break;
+	case 3:Subtract(num,range,parameternum);break;
+	case 4:SubtractComplex(num,range,brackets,point,parameternum);break;
+	case 5:Multiply(num,range,parameternum);break;
+	case 6:MultiplyComplex(num,range,brackets,point,parameternum);break;
+	case 7:Divide(num,range,parameternum);break;
+	case 8:DivideComplex(num,range,brackets,point,parameternum);break;
+	case 9:HybridOperation(num,range,brackets,point,parameternum);break;
+	default:printf("退出成功！\n");break;
+	}
+	return 0;
+}
+void Add(int num,int range,int parameternum)
+{
+	srand(time(NULL));
+	int i=0,j=0,k=0,arrpara[Max],answer[MaxNum];
+	int result=0;
+	FILE *fp;
+	if((fp=fopen("E:\\测试题.txt","wb"))==NULL)
+	{
+		printf("ERROR!\n");
+		exit(1);
+	}
+	fputs("简单加法题\n",fp);
+	for(i=0;i<num;i++)
+	{
+		for(j=0;j<parameternum;j++)
+		{
+	        arrpara[j]=rand()%range;
+			if(arrpara[j]<0)
+			{
+			    arrpara[j]=-arrpara[j];
+			}
+			result=result+arrpara[j];
+		}
+		if(result<=range)
+		{
+		    answer[i]=result;
+			fprintf(fp,"%d",arrpara[0]);
+			for(k=1;k<parameternum;k++)
+			{
+				fputs("+",fp);
+			    fprintf(fp,"%d",arrpara[k]);
+			}
+			fputs("=()\n",fp);
+		}
+		else
+		{
+		    i--;
+		}
+		result=0;
+	}
+	fputs("试题答案\n",fp);
+	for(i=0;i<num;i++)
+	{
+	    fprintf(fp,"%d\n",answer[i]);
+	}
+	fclose(fp);
+}
+void AddComplex(int num,int range,int brackets,int point,int parameternum)
+{
+	
+	//xiao shu chu 3;乘100 取余除100注意类型转换或者rand的时候取余*100zai/100
+	printf("是否需要括号\n");
+	printf("1.是 2.否\n");
+	scanf("%d",&brackets);
+	printf("是否需要小数\n");
+	printf("1.是 2.否\n");
+	scanf("%d",&point);
+	if(point==0&&parameternum==0)
+	{
+	    Add(num,range,parameternum);
+	}
+	srand(time(NULL));
+	int i=0,j=0,k=0,arrpara[Max],answer[MaxNum];
+	int result=0;
+	FILE *fp;
+	if((fp=fopen("E:\\测试题.txt","wb"))==NULL)
+	{
+		printf("ERROR!\n");
+		exit(1);
+	}
+	fputs("复杂加法题\n",fp);
+	for(i=0;i<num;i++)
+	{
+		if(point==1)
+		{
+		    for(j=0;j<parameternum;j++)
+		    {
+				arrpara[j]=rand()%(range*100);
+				if(arrpara[j]<0)
+				{
+					arrpara[j]=-arrpara[j];
+				}
+				result=result+arrpara[j];
+		    }
+		}
+		else
+		{
+		    for(j=0;j<parameternum;j++)
+			{
+				arrpara[j]=rand()%range;
+				if(arrpara[j]<0)
+				{
+					arrpara[j]=-arrpara[j];
+				}
+					result=result+arrpara[j];
+			}
+		}
+		if(point==1)
+		{
+			if(result/100<=range)
+			{
+				if(brackets==1)
+				{
+				    answer[i]=result;
+					fputs("(",fp);
+					fprintf(fp,"%.3lf",float(arrpara[0])/100);
+					for(k=1;k<parameternum;k++)
+					{
+						fputs("+",fp);
+					    fprintf(fp,"%.3lf",float(arrpara[k])/100);
+						if(k==1)
+						{
+							fputs(")",fp);
+						}
+					}
+					fputs("=()\n",fp);
+				}
+				else if(brackets==0)
+				{
+				    answer[i]=result;
+					fprintf(fp,"%.3lf",float(arrpara[0])/100);
+					for(k=1;k<parameternum;k++)
+					{
+						fputs("+",fp);
+					    fprintf(fp,"%.3lf",float(arrpara[k])/100);
+					}
+					fputs("=()\n",fp);
+				}
+			}
+			else
+			{
+				i--;
+			}
+		}
+		else
+		{
+		    if(result<=range&&brackets==1)
+		    {
+				answer[i]=result;
+				fputs("(",fp);
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					fputs("+",fp);
+				    fprintf(fp,"%d",arrpara[k]);
+					if(k==1)
+					{
+					    fputs(")",fp);
+					}
+				}
+				fputs("=()\n",fp);
+			}
+			else if(result<=range&&brackets==0)
+			{
+			    answer[i]=result;
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					fputs("+",fp);
+				    fprintf(fp,"%d",arrpara[k]);
+				}
+				fputs("=()\n",fp);
+			}
+			else
+			{
+			    i--;
+			}
+		}
+		result=0;
+	}
+	fputs("试题答案\n",fp);
+	if(point==1)
+	{
+		for(i=0;i<num;i++)
+		{
+		   fprintf(fp,"%.3lf\n",float(answer[i])/100);
+		}
+	}
+	else
+	{
+		for(i=0;i<num;i++)
+		{
+			fprintf(fp,"%d\n",answer[i]);
+		}
+	}
+	fclose(fp);
+	
+}
+
+void Subtract(int num,int range,int parameternum)
+{
+	srand(time(NULL));
+	int i=0,j=0,k=0,arrpara[Max],answer[MaxNum];
+	int result=0;
+	FILE *fp;
+	if((fp=fopen("E:\\测试题.txt","wb"))==NULL)
+	{
+		printf("ERROR!\n");
+		exit(1);
+	}
+	fputs("简单减法题\n",fp);
+	for(i=0;i<num;i++)
+	{
+		for(j=0;j<parameternum;j++)
+		{
+	        arrpara[j]=rand()%range;
+			if(arrpara[j]<0)
+			{
+			    arrpara[j]=-arrpara[j];
+			}
+			if(j==0)
+			{
+			    result=arrpara[j];
+			}
+			else
+			{
+		        result=result-arrpara[j];
+			}
+		}
+		if(result<=range&&result>=0)
+		{
+		    answer[i]=result;
+			fprintf(fp,"%d",arrpara[0]);
+			for(k=1;k<parameternum;k++)
+			{
+				fputs("-",fp);
+			    fprintf(fp,"%d",arrpara[k]);
+			}
+			fputs("=()\n",fp);
+		}
+		else
+		{
+		    i--;
+		}
+		result=0;
+	}
+	fputs("试题答案\n",fp);
+	for(i=0;i<num;i++)
+	{
+	    fprintf(fp,"%d\n",answer[i]);
+	}
+	fclose(fp);
+}
+
+void SubtractComplex(int num,int range,int brackets,int point,int parameternum)
+{
+	printf("是否需要括号\n");
+	printf("1.是 0.否\n");
+	scanf("%d",&brackets);
+	printf("是否需要小数\n");
+	printf("1.是 0.否\n");
+	scanf("%d",&point);
+	if(point==0&&parameternum==0)
+	{
+	    Subtract(num,range,parameternum);
+	}
+	srand(time(NULL));
+	int i=0,j=0,k=0,arrpara[Max],answer[MaxNum];
+	int result=0;
+	FILE *fp;
+	if((fp=fopen("E:\\测试题.txt","wb"))==NULL)
+	{
+		printf("ERROR!\n");
+		exit(1);
+	}
+	fputs("复杂减法题\n",fp);
+	for(i=0;i<num;i++)
+	{
+		if(point==1)
+		{
+
+		    for(j=0;j<parameternum;j++)
+		    {
+				arrpara[j]=rand()%(range*100);
+				if(arrpara[j]<0)
+				{
+					arrpara[j]=-arrpara[j];
+				}
+				if(j==0)
+				{
+				    result=arrpara[j];
+				}
+				else
+				{
+			    	result=result-arrpara[j];
+				}
+				
+		    }
+		}
+		else
+		{
+		    for(j=0;j<parameternum;j++)
+			{
+				arrpara[j]=rand()%range;
+				if(arrpara[j]<0)
+				{
+					arrpara[j]=-arrpara[j];
+				}
+				if(j==0)
+				{
+				    result=arrpara[j];
+				}
+				else
+				{
+					result=result-arrpara[j];
+				}
+			}
+		}
+		if(point==1)
+		{
+			if(result/100<=range&&result>=0)
+			{
+				if(brackets==1)
+				{
+				    answer[i]=result;
+					fputs("(",fp);
+					fprintf(fp,"%.3lf",float(arrpara[0])/100);
+					for(k=1;k<parameternum;k++)
+					{
+						fputs("-",fp);
+					    fprintf(fp,"%.3lf",float(arrpara[k])/100);
+						if(k==1)
+						{
+							fputs(")",fp);
+						}
+					}
+					fputs("=()\n",fp);
+				}
+				else if(brackets==0&&result>=0)
+				{
+				    answer[i]=result;
+					fprintf(fp,"%.3lf",float(arrpara[0])/100);
+					for(k=1;k<parameternum;k++)
+					{
+						fputs("-",fp);
+					    fprintf(fp,"%.3lf",float(arrpara[k])/100);
+					}
+					fputs("=()\n",fp);
+				}
+			}
+			else
+			{
+				i--;
+			}
+		}
+		else
+		{
+		    if(result<=range&&brackets==1&&result>=0)
+		    {
+				answer[i]=result;
+				fputs("(",fp);
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					fputs("-",fp);
+				    fprintf(fp,"%d",arrpara[k]);
+					if(k==1)
+					{
+					    fputs(")",fp);
+					}
+				}
+				fputs("=()\n",fp);
+			}
+			else if(result<=range&&brackets==0&&result>=0)
+			{
+			    answer[i]=result;
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					fputs("-",fp);
+				    fprintf(fp,"%d",arrpara[k]);
+				}
+				fputs("=()\n",fp);
+			}
+			else
+			{
+			    i--;
+			}
+		}
+		result=0;
+	}
+	fputs("试题答案\n",fp);
+	if(point==1)
+	{
+		for(i=0;i<num;i++)
+		{
+		   fprintf(fp,"%.3lf\n",float(answer[i])/100);
+		}
+	}
+	else
+	{
+		for(i=0;i<num;i++)
+		{
+			fprintf(fp,"%d\n",answer[i]);
+		}
+	}
+	fclose(fp);
+}
+
+void Multiply(int num,int range,int parameternum)
+{
+	srand(time(NULL));
+	int i=0,j=0,k=0,arrpara[Max],answer[MaxNum];
+	int result=1;
+	FILE *fp;
+	if((fp=fopen("E:\\测试题.txt","wb"))==NULL)
+	{
+		printf("ERROR!\n");
+		exit(1);
+	}
+	fputs("简单乘法题\n",fp);
+	for(i=0;i<num;i++)
+	{
+		for(j=0;j<parameternum;j++)
+		{
+	        arrpara[j]=rand()%range+1;
+			if(arrpara[j]<0)
+			{
+			    arrpara[j]=-arrpara[j];
+			}
+			result=result*arrpara[j];
+		}
+		if(result<=range)
+		{
+		    answer[i]=result;
+			fprintf(fp,"%d",arrpara[0]);
+			for(k=1;k<parameternum;k++)
+			{
+				fputs("x",fp);
+			    fprintf(fp,"%d",arrpara[k]);
+			}
+			fputs("=()\n",fp);
+		}
+		else
+		{
+		    i--;
+		}
+		result=1;
+	}
+	fputs("试题答案\n",fp);
+	for(i=0;i<num;i++)
+	{
+	    fprintf(fp,"%d\n",answer[i]);
+	}
+	fclose(fp);
+}
+
+void MultiplyComplex(int num,int range,int brackets,int point,int parameternum)
+{
+	printf("是否需要括号\n");
+	printf("1.是 0.否\n");
+	scanf("%d",&brackets);
+	printf("是否需要小数\n");
+	printf("1.是 0.否\n");
+	scanf("%d",&point);
+if(point==0&&parameternum==0)
+	{
+	    Multiply(num,range,parameternum);
+	}
+	srand(time(NULL));
+	int i=0,j=0,k=0,arrpara[Max],answer[MaxNum];
+	int result=1;
+	float arrpara1[Max],answer1[MaxNum],result1=1;
+	FILE *fp;
+	if((fp=fopen("E:\\测试题.txt","wb"))==NULL)
+	{
+		printf("ERROR!\n");
+		exit(1);
+	}
+	fputs("复杂乘法题\n",fp);
+	for(i=0;i<num;i++)
+	{
+		if(point==1)
+		{
+		    for(j=0;j<parameternum;j++)
+		    {
+				arrpara1[j]=float(rand()%range)/3*2+0.5;
+				if(arrpara1[j]<0)
+				{
+					arrpara1[j]=-arrpara1[j];
+				}
+				result1=result1*arrpara1[j];
+		    }
+		}
+		else
+		{
+		    for(j=0;j<parameternum;j++)
+			{
+				arrpara[j]=rand()%range+1;
+				if(arrpara[j]<0)
+				{
+					arrpara[j]=-arrpara[j];
+				}
+					result=result*arrpara[j];
+			}
+		}
+		if(point==1)
+		{
+			if(result1<=range)
+			{
+				if(brackets==1)
+				{
+				    answer1[i]=result1;
+					fputs("(",fp);
+					fprintf(fp,"%.3lf",arrpara1[0]);
+					for(k=1;k<parameternum;k++)
+					{
+						fputs("x",fp);
+					    fprintf(fp,"%.3lf",arrpara1[k]);
+						if(k==1)
+						{
+							fputs(")",fp);
+						}
+					}
+					fputs("=()\n",fp);
+				}
+				else if(brackets==0)
+				{
+				    answer1[i]=result1;
+					fprintf(fp,"%.3lf",arrpara1[0]);
+					for(k=1;k<parameternum;k++)
+					{
+						fputs("x",fp);
+					    fprintf(fp,"%.3lf",arrpara1[k]);
+					}
+					fputs("=()\n",fp);
+				}
+			}
+			else
+			{
+				i--;
+			}
+		}
+		else
+		{
+		    if(result<=range&&brackets==1)
+		    {
+				answer[i]=result;
+				fputs("(",fp);
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					fputs("x",fp);
+				    fprintf(fp,"%d",arrpara[k]);
+					if(k==1)
+					{
+					    fputs(")",fp);
+					}
+				}
+				fputs("=()\n",fp);
+			}
+			else if(result<=range&&brackets==0)
+			{
+			    answer[i]=result;
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					fputs("x",fp);
+				    fprintf(fp,"%d",arrpara[k]);
+				}
+				fputs("=()\n",fp);
+			}
+			else
+			{
+			    i--;
+			}
+		}
+		result=1;
+		result1=1;
+	}
+	fputs("试题答案\n",fp);
+	if(point==1)
+	{
+		for(i=0;i<num;i++)
+		{
+		   fprintf(fp,"%.3lf\n",answer1[i]);
+		}
+	}
+	else
+	{
+		for(i=0;i<num;i++)
+		{
+			fprintf(fp,"%d\n",answer[i]);
+		}
+	}
+	fclose(fp);
+}
+
+void Divide(int num,int range,int parameternum)
+{
+	srand(time(NULL));
+	int i=0,j=0,k=0;
+	float arrpara[Max],answer[MaxNum];
+	float result=0;
+	FILE *fp;
+	if((fp=fopen("E:\\测试题.txt","wb"))==NULL)
+	{
+		printf("ERROR!\n");
+		exit(1);
+	}
+	fputs("简单除法题\n",fp);
+	for(i=0;i<num;i++)
+	{
+		for(j=0;j<parameternum;j++)
+		{
+	        arrpara[j]=rand()%range;
+			if(Judge(arrpara[j])==1)
+			{
+				if(arrpara[j]<0)
+				{
+				    arrpara[j]=-arrpara[j];
+				}
+				if(j==0)
+				{
+					result=arrpara[j];
+				}
+				else
+				{
+					result=result/arrpara[j];
+				}
+			}
+			else
+			{
+			    j--;
+			}
+		}
+		if(result<=range)
+		{
+		    answer[i]=result;
+			fprintf(fp,"%.f",arrpara[0]);
+			for(k=1;k<parameternum;k++)
+			{
+				fputs("÷",fp);
+			    fprintf(fp,"%.f",arrpara[k]);
+			}
+			fputs("=()\n",fp);
+		}
+		else
+		{
+		    i--;
+		}
+		result=0;
+	}
+	fputs("试题答案\n",fp);
+	for(i=0;i<num;i++)
+	{
+	    fprintf(fp,"%.3f\n",answer[i]);
+	}
+	fclose(fp);
+}
+
+void DivideComplex(int num,int range,int brackets,int point,int parameternum)
+{
+	printf("是否需要括号\n");
+	printf("1.是 0.否\n");
+	scanf("%d",&brackets);
+	printf("是否需要小数\n");
+	printf("1.是 0.否\n");
+	scanf("%d",&point);
+	if(point==0&&parameternum==0)
+	{
+	    Multiply(num,range,parameternum);
+	}
+	srand(time(NULL));
+	int i=0,j=0,k=0,arrpara[Max];
+	float arrpara1[Max],answer[MaxNum],result=1;
+	FILE *fp;
+	if((fp=fopen("E:\\测试题.txt","wb"))==NULL)
+	{
+		printf("ERROR!\n");
+		exit(1);
+	}
+	fputs("复杂乘法题\n",fp);
+	for(i=0;i<num;i++)
+	{
+		if(point==1)
+		{
+		   	for(j=0;j<parameternum;j++)
+			{
+		       arrpara1[j]=float(rand()%range)/3*2+0.5;
+				if(Judge(arrpara1[j])==1)
+				{
+					if(arrpara1[j]<0)
+					{
+					    arrpara1[j]=-arrpara1[j];
+					}
+					if(j==0)
+					{
+						result=arrpara1[j];
+					}
+					else
+					{
+						result=result/arrpara1[j];
+					}
+				}
+				else
+				{
+				    j--;
+				}
+			}
+		}
+		else
+		{
+		   	for(j=0;j<parameternum;j++)
+			{
+			    arrpara[j]=rand()%range;
+				if(Judge(arrpara[j])==1)
+				{
+					if(arrpara[j]<0)
+					{
+					    arrpara[j]=-arrpara[j];
+					}
+					if(j==0)
+					{
+						result=arrpara[j];
+					}
+					else
+					{
+						result=result/arrpara[j];
+					}
+				}
+				else
+				{
+				    j--;
+				}
+			}
+		}
+		if(point==1)
+		{
+			if(result<=range&&result>=0)
+			{
+				if(brackets==1)
+				{
+				    answer[i]=result;
+					fputs("(",fp);
+					fprintf(fp,"%.3lf",arrpara1[0]);
+					for(k=1;k<parameternum;k++)
+					{
+						fputs("÷",fp);
+					    fprintf(fp,"%.3lf",arrpara1[k]);
+						if(k==1)
+						{
+							fputs(")",fp);
+						}
+					}
+					fputs("=()\n",fp);
+				}
+				else if(brackets==0&&result>=0)
+				{
+				    answer[i]=result;
+					fprintf(fp,"%.3lf",arrpara1[0]);
+					for(k=1;k<parameternum;k++)
+					{
+						fputs("÷",fp);
+					    fprintf(fp,"%.3lf",arrpara1[k]);
+					}
+					fputs("=()\n",fp);
+				}
+			}
+			else
+			{
+				i--;
+			}
+		}
+		else
+		{
+		    if(result<=range&&brackets==1&&result>=0)
+		    {
+				answer[i]=result;
+				fputs("(",fp);
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					fputs("÷",fp);
+				    fprintf(fp,"%d",arrpara[k]);
+					if(k==1)
+					{
+					    fputs(")",fp);
+					}
+				}
+				fputs("=()\n",fp);
+			}
+			else if(result<=range&&brackets==0&&result>=0)
+			{
+			    answer[i]=result;
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					fputs("÷",fp);
+				    fprintf(fp,"%d",arrpara[k]);
+				}
+				fputs("=()\n",fp);
+			}
+			else
+			{
+			    i--;
+			}
+		}
+		result=1;
+	}
+	fputs("试题答案\n",fp);
+		for(i=0;i<num;i++)
+		{
+		   fprintf(fp,"%.3lf\n",answer[i]);
+		}
+	fclose(fp);
+}
+
+int Judge(float arrpara)
+{
+	if(arrpara==0)
+	{
+        return 0;
+	}
+	else
+	{
+	    return 1;
+	}
+}
+
+void HybridOperation(int num,int range,int brackets,int point,int parameternum)
+{
+	int numx=0,i=0;
+	int operators[Max];
+	printf("请输入您想添加的运算符数量:\n");
+	scanf("%d",&numx);
+	printf("请输入您想添加的运算符，若多次输入相同的运算符，则默认该运算符数量较其他运算符多:\n");
+	printf("1.加法 2.减法 3.乘法 4.除法\n");
+	for(i=0;i<numx;i++)
+	{
+	    scanf("%d",&operators[i]);
+	}
+	if(numx==1)
+	{
+		switch(operators[0])
+		{
+			case 1:AddComplex(num,range,brackets,point,parameternum);break;
+			case 2:SubtractComplex(num,range,brackets,point,parameternum);break;
+			case 3:MultiplyComplex(num,range,brackets,point,parameternum);break;
+			case 4:DivideComplex(num,range,brackets,point,parameternum);break;
+		}
+	}
+	while(parameternum<numx+1)
+	{
+	    printf("参数数量过少，请重新输入参数数量");
+		scanf("%d",&parameternum);
+	}
+	printf("是否需要括号\n");
+	printf("1.是 0.否\n");
+	scanf("%d",&brackets);
+	printf("是否需要小数\n");
+	printf("1.是 0.否\n");
+	scanf("%d",&point);
+	srand(time(NULL));
+	int j=0,k=0,temp=0,arrpara[Max];
+	float arrpara1[Max],answer[MaxNum],answer1[MaxNum],result=1,result1=1;
+	int _toperator[Max];
+	char _operator[4]={'+','-','x','/'};
+	FILE *fp;
+	if((fp=fopen("E:\\测试题.txt","wb"))==NULL)
+	{
+		printf("ERROR!\n");
+		exit(1);
+	}
+	fputs("自定义四则运算题\n",fp);
+	for(i=0;i<num;i++)
+	{
+		if(point==1)
+		{
+		   	for(j=0;j<parameternum*2-1;j++)
+			{
+				if(j%2==0)
+				{
+	   		        arrpara1[j/2]=float(rand()%range)/3*2+0.5;
+					if(Judge(arrpara1[j/2])==1)
+					{
+						if(arrpara1[j/2]<0)
+						{
+						    arrpara1[j/2]=-arrpara1[j/2];
+						}
+						if(j==0)
+						{
+							result=arrpara1[j/2];
+						}
+						else
+						{
+							if(temp==1)
+							{
+							    result=result+arrpara1[j/2];
+							}
+							else if(temp==2)
+							{
+							    result=result-arrpara1[j/2];
+							}
+							else if(temp==3)
+							{
+							    result=result*arrpara1[j/2];
+							}
+							else
+							{
+							    result=result/arrpara1[j/2];
+							}
+						}
+					}
+					else
+					{
+					    j--;
+					}
+				}
+				else
+				{
+					temp=(rand()%range)%numx;
+					if(temp<0)
+					{
+						temp=-temp;
+					}
+					if(temp<4)
+					{
+					    _toperator[j/2]=operators[temp]-1;
+						temp=_toperator[j/2]+1;
+					}
+					else
+					{
+					    j--;
+					}
+				}
+			}
+		}
+		else
+		{
+		   	for(j=0;j<parameternum*2-1;j++)
+			{
+                if(j%2==0)
+				{
+	   		        arrpara[j/2]=rand()%range;
+					if(Judge(arrpara[j/2])==1)
+					{
+						if(arrpara[j/2]<0)
+						{
+						    arrpara[j/2]=-arrpara1[j];
+						}
+						if(j==0)
+						{
+							result=arrpara[j/2];
+						}
+						else
+						{
+							if(temp==1)
+							{
+							    result=result+arrpara[j/2];
+							}
+							else if(temp==2)
+							{
+							    result=result-arrpara[j/2];
+							}
+							else if(temp==3)
+							{
+							    result=result*arrpara[j/2];
+							}
+							else
+							{
+							    result=result/arrpara[j/2];
+							}
+						}
+					}
+					else
+					{
+					    j--;
+					}
+				}
+				else
+				{
+					temp=(rand()%range)%numx;
+					if(temp<0)
+					{
+						temp=-temp;
+					}
+					if(temp<4)
+					{
+					    _toperator[j/2]=operators[temp]-1;
+						temp=_toperator[j/2]+1;
+					}
+					else
+					{
+					    j--;
+					}
+				}
+			}
+		}
+		if(point==1)
+		{
+			if(result<=range&&result>=0)
+			{
+				if(brackets==1)
+				{
+				    answer[i]=result;
+					fputs("(",fp);
+					fprintf(fp,"%.3lf",arrpara1[0]);
+					for(k=1;k<parameternum;k++)
+					{
+						temp=_toperator[k-1];
+						fprintf(fp,"%c",_operator[temp]);
+					    fprintf(fp,"%.3lf",arrpara1[k]);
+						if(k==1)
+						{
+							fputs(")",fp);
+						}
+					}
+					fputs("=()\n",fp);
+				}
+				else if(brackets==0&&result>=0)
+				{
+				    answer[i]=result;
+					fprintf(fp,"%.3lf",arrpara1[0]);
+					for(k=1;k<parameternum;k++)
+					{
+						temp=_toperator[k-1];
+						fprintf(fp,"%c",_operator[temp]);
+					    fprintf(fp,"%.3lf",arrpara1[k]);
+					}
+					fputs("=()\n",fp);
+				}
+			}
+			else
+			{
+				i--;
+			}
+		}
+		else
+		{
+		    if(result<=range&&brackets==1&&result>=0)
+		    {
+				answer[i]=result;
+				fputs("(",fp);
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					temp=_toperator[k-1];
+					fprintf(fp,"%c",_operator[temp]);
+				    fprintf(fp,"%d",arrpara[k]);
+					if(k==1)
+					{
+					    fputs(")",fp);
+					}
+				}
+				fputs("=()\n",fp);
+			}
+			else if(result<=range&&brackets==0&&result>=0)
+			{
+			    answer[i]=result;
+				fprintf(fp,"%d",arrpara[0]);
+				for(k=1;k<parameternum;k++)
+				{
+					temp=_toperator[k-1];
+					fprintf(fp,"% c",_operator[temp]);
+				    fprintf(fp,"%d",arrpara[k]);
+				}
+				fputs("=()\n",fp);
+			}
+			else
+			{
+			    i--;
+			}
+		}
+		result=1;
+	}
+	fclose(fp);
+}
